@@ -1,0 +1,43 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: hello-world-ENV_JOBNAME
+  namespace: justuzys30-dev
+  annotations:
+    chains.tekton.dev/signed: 'true'
+    pipeline.openshift.io/started-by: justuzys30
+  labels:
+    app.kubernetes.io/instance: hello-world
+    app.kubernetes.io/name: hello-world
+    operator.tekton.dev/operand-name: openshift-pipelines-addons
+    pipeline.openshift.io/runtime: java
+    pipeline.openshift.io/runtime-version: openjdk-17-ubi8
+    pipeline.openshift.io/type: knative
+    tekton.dev/pipeline: hello-world
+spec:
+  pipelineRef:
+    name: hello-world
+  params:
+    - name: APP_NAME
+      value: PARAM_APP_NAME
+    - name: GIT_REPO
+      value: PARAM_GIT_REPO
+    - name: GIT_REVISION
+      value: PARAM_GIT_REVISION
+    - name: IMAGE_NAME
+      value: PARAM_IMAGE_NAME
+    - name: PATH_CONTEXT
+      value: PARAM_PATH_CONTEXT
+    - name: VERSION
+      value: PARAM_VERSION
+  workspaces:
+    - name: workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+  timeouts:
+    pipeline: 1h0m0s
